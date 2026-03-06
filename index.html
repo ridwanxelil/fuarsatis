@@ -1,0 +1,1455 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>📚 Fuar Satış</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
+:root{
+  --bg:#0f1117;--surf:#1a1d27;--surf2:#222536;--bdr:#2e3248;
+  --acc:#f0a500;--grn:#2ecc71;--red:#e74c3c;--blu:#3498db;
+  --txt:#e8eaf0;--mut:#7b82a0;--r:12px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden}
+body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--txt);font-size:15px;display:flex;flex-direction:column}
+
+/* ── HEADER ── */
+.hdr{background:var(--surf);border-bottom:1px solid var(--bdr);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;z-index:100}
+.hdr-title{font-size:17px;font-weight:700;color:var(--acc)}
+.hdr-title span{color:var(--txt)}
+.hdr-stats{display:flex;gap:10px}
+.hs{text-align:right}
+.hs-v{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--grn)}
+.hs-l{font-size:10px;color:var(--mut)}
+
+/* ── CONTENT ── */
+.content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:70px}
+.page{display:none;padding:14px}
+.page.active{display:block}
+
+/* ── BOTTOM NAV ── */
+.nav{position:fixed;bottom:0;left:0;right:0;background:var(--surf);border-top:1px solid var(--bdr);display:flex;z-index:200;flex-shrink:0}
+.ni{flex:1;padding:9px 4px;text-align:center;cursor:pointer;user-select:none;position:relative}
+.ni.active .ni-ic,.ni.active .ni-lb{color:var(--acc)}
+.ni-ic{font-size:19px;display:block;color:var(--mut)}
+.ni-lb{font-size:10px;color:var(--mut);font-weight:500;margin-top:1px}
+.nbadge{position:absolute;top:5px;right:calc(50% - 17px);background:var(--red);color:#fff;font-size:9px;font-weight:700;width:15px;height:15px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+
+/* ── SECTION ── */
+.st{font-size:12px;font-weight:600;color:var(--mut);text-transform:uppercase;letter-spacing:.8px;margin:18px 0 10px}
+.st:first-child{margin-top:0}
+.card{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r);padding:14px;margin-bottom:10px}
+
+/* ── FORM ── */
+input,select,textarea{width:100%;background:var(--surf2);border:1px solid var(--bdr);border-radius:8px;color:var(--txt);font-family:'Sora',sans-serif;font-size:14px;padding:10px 12px;outline:none;transition:border-color .2s;-webkit-appearance:none;-moz-appearance:none}
+input:focus,select:focus,textarea:focus{border-color:var(--acc)}
+input::placeholder,textarea::placeholder{color:var(--mut)}
+select option{background:var(--surf2)}
+label{display:block;font-size:12px;color:var(--mut);margin-bottom:4px;font-weight:500}
+.fr{margin-bottom:10px}
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fg3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+textarea{resize:vertical;min-height:60px}
+
+/* ── COMBO ── */
+.cb-wrap{position:relative}
+.cb-row{display:flex;gap:6px}
+.cb-row input{flex:1;min-width:0}
+.cb-add{flex-shrink:0;background:var(--acc);color:#000;border:none;border-radius:8px;padding:0 13px;font-size:20px;font-weight:700;cursor:pointer;display:none;align-items:center;justify-content:center;height:42px;transition:transform .15s}
+.cb-add.show{display:flex}
+.cb-add:active{transform:scale(.92)}
+.cb-drop{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--surf);border:1px solid var(--acc);border-radius:10px;z-index:600;max-height:200px;overflow-y:auto;box-shadow:0 8px 28px rgba(0,0,0,.55);display:none}
+.cb-drop.open{display:block}
+.cb-it{padding:10px 13px;cursor:pointer;font-size:13px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;gap:8px;transition:background .1s}
+.cb-it:last-child{border-bottom:none}
+.cb-it:active{background:var(--surf2)}
+.cb-it .edit-ico{margin-left:auto;font-size:12px;opacity:.5}
+.cb-none{padding:9px 13px;font-size:12px;color:var(--mut);font-style:italic}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 16px;border-radius:8px;font-family:'Sora',sans-serif;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .15s;user-select:none;white-space:nowrap}
+.btn:active{transform:scale(.96)}
+.btn-p{background:var(--acc);color:#000}
+.btn-d{background:var(--red);color:#fff}
+.btn-s{background:var(--grn);color:#000}
+.btn-g{background:var(--surf2);color:var(--txt);border:1px solid var(--bdr)}
+.btn-b{background:var(--blu);color:#fff}
+.btn-f{width:100%}
+.btn-lg{padding:13px 20px;font-size:15px}
+.btn-sm{padding:6px 10px;font-size:11px}
+.btn-row{display:flex;gap:8px;margin-bottom:10px}
+.btn-row .btn{flex:1}
+
+/* ── SCAN ── */
+.scan-box{background:linear-gradient(135deg,var(--surf),var(--surf2));border:2px dashed var(--acc);border-radius:14px;padding:18px;text-align:center;margin-bottom:12px;position:relative;overflow:hidden}
+.scan-box::before{content:'';position:absolute;top:0;left:-100%;width:55%;height:100%;background:linear-gradient(90deg,transparent,rgba(240,165,0,.06),transparent);animation:sweep 3s ease-in-out infinite}
+@keyframes sweep{0%,100%{left:-100%}50%{left:140%}}
+.si-wrap{position:relative;margin-top:12px}
+.si-wrap input{font-family:'JetBrains Mono',monospace;font-size:15px;padding-left:38px;background:var(--bg);border-color:var(--acc)}
+.si-pre{position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:15px}
+#cam-container{width:100%;max-width:340px;margin:10px auto 0;border-radius:10px;overflow:hidden;display:none}
+#cam-container video{width:100%;display:block}
+#cam-container canvas{display:none}
+
+/* ── BOOK ITEM ── */
+.bi{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r);padding:11px 13px;margin-bottom:7px;display:flex;align-items:center;gap:10px;transition:border-color .2s}
+.bi:hover{border-color:var(--acc)}
+.bi-cov{width:40px;height:52px;background:var(--surf2);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;border:1px solid var(--bdr)}
+.bi-inf{flex:1;min-width:0}
+.bi-title{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bi-sub{font-size:11px;color:var(--mut);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bi-isbn{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--mut);margin-top:2px}
+.bi-price{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:var(--acc);white-space:nowrap}
+.bi-acts{display:flex;gap:5px;flex-shrink:0}
+
+/* ── BADGES ── */
+.badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600}
+.bg-g{background:rgba(46,204,113,.15);color:var(--grn)}
+.bg-r{background:rgba(231,76,60,.15);color:var(--red)}
+.bg-y{background:rgba(240,165,0,.15);color:var(--acc)}
+.bg-b{background:rgba(52,152,219,.15);color:var(--blu)}
+
+/* ── CART ── */
+.ci{display:flex;align-items:center;gap:9px;padding:10px 13px;background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r);margin-bottom:7px}
+.ci-inf{flex:1;min-width:0}
+.ci-title{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ci-price{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--mut);margin-top:1px}
+.ci-tot{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:var(--acc);white-space:nowrap}
+.qc{display:flex;align-items:center;gap:5px}
+.qb{width:27px;height:27px;border-radius:6px;border:1px solid var(--bdr);background:var(--surf2);color:var(--txt);font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0}
+.qb:active{background:var(--acc);color:#000}
+.qv{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;min-width:22px;text-align:center}
+
+/* ── TOTAL BAR ── */
+.tot-bar{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r);padding:13px;margin-top:9px}
+.tr{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
+.tr:last-child{margin-bottom:0}
+.tl{font-size:13px;color:var(--mut)}
+.tv{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600}
+.tv-big{font-size:22px!important;color:var(--acc)!important;font-weight:700!important}
+.divider{border:none;border-top:1px solid var(--bdr);margin:7px 0}
+.disc-row{display:flex;gap:8px;margin-bottom:10px}
+
+/* ── STATS ── */
+.sg{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:13px}
+.sc{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r);padding:13px;text-align:center}
+.sv{font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;color:var(--acc)}
+.sl{font-size:10px;color:var(--mut);margin-top:3px;font-weight:500}
+
+/* ── TABLE ── */
+.rt{width:100%;border-collapse:collapse;font-size:12px}
+.rt th{background:var(--surf2);color:var(--mut);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;padding:7px 9px;text-align:left;border-bottom:1px solid var(--bdr)}
+.rt td{padding:9px;border-bottom:1px solid var(--bdr);vertical-align:middle}
+.rt tr:last-child td{border-bottom:none}
+.rt tbody tr:hover{background:rgba(255,255,255,.02)}
+.tw{overflow-x:auto;border-radius:var(--r);border:1px solid var(--bdr);background:var(--surf);margin-bottom:10px}
+
+/* ── PERSON CARD ── */
+.pc{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r);padding:13px;margin-bottom:8px;cursor:pointer;transition:border-color .2s}
+.pc:hover{border-color:var(--acc)}
+.pc-hdr{display:flex;align-items:center;gap:10px}
+.pc-ico{width:40px;height:40px;border-radius:50%;background:var(--surf2);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;border:1px solid var(--bdr)}
+.pc-name{font-size:14px;font-weight:600}
+.pc-sub{font-size:11px;color:var(--mut);margin-top:2px}
+.pc-stats{display:flex;gap:8px;margin-top:9px;padding-top:9px;border-top:1px solid var(--bdr)}
+.pc-stat{flex:1;text-align:center}
+.pc-stat-v{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:var(--acc)}
+.pc-stat-l{font-size:10px;color:var(--mut);margin-top:2px}
+
+/* ── SALE LOG ── */
+.sli{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r);padding:11px 13px;margin-bottom:7px}
+.sli-hdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:5px}
+.sli-time{font-size:11px;color:var(--mut);font-family:'JetBrains Mono',monospace}
+.sli-tot{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--grn)}
+.sli-books{font-size:11px;color:var(--mut)}
+
+/* ── STATUS BAR (toast yerine) ── */
+.sbar{position:fixed;top:52px;left:0;right:0;z-index:9999;pointer-events:none;display:flex;justify-content:center;padding:6px 12px}
+.sbar-inner{background:var(--surf2);border:1px solid var(--bdr);border-radius:8px;padding:8px 16px;font-size:12px;font-weight:600;max-width:92vw;text-align:center;transform:translateY(-60px);transition:transform .25s cubic-bezier(.34,1.4,.64,1);opacity:0}
+.sbar-inner.show{transform:translateY(0);opacity:1}
+.sbar-inner.ok{border-color:var(--grn);color:var(--grn)}
+.sbar-inner.err{border-color:var(--red);color:var(--red)}
+.sbar-inner.inf{border-color:var(--acc);color:var(--acc)}
+/* ── ÖDEME BUTONLARI ── */
+.pay-btns{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:11px}
+.pay-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:12px 6px;border-radius:10px;font-family:'Sora',sans-serif;font-size:11px;font-weight:700;cursor:pointer;border:none;transition:all .15s;user-select:none}
+.pay-btn:active{transform:scale(.94)}
+.pay-btn .pay-ico{font-size:22px}
+.pay-cash{background:#1a3a2a;color:#2ecc71;border:2px solid #2ecc71}
+.pay-card{background:#1a2a3a;color:#3498db;border:2px solid #3498db}
+.pay-wire{background:#2a2a1a;color:#f0a500;border:2px solid #f0a500}
+.pay-btn-cancel{display:flex;align-items:center;justify-content:center;padding:11px;border-radius:8px;font-family:'Sora',sans-serif;font-size:13px;font-weight:600;cursor:pointer;border:none;background:var(--surf2);color:var(--mut);border:1px solid var(--bdr);margin-top:8px;width:100%;transition:all .15s}
+/* ── ÖDEME BADGE ── */
+.pay-badge-cash{background:rgba(46,204,113,.15);color:var(--grn)}
+.pay-badge-card{background:rgba(52,152,219,.15);color:var(--blu)}
+.pay-badge-wire{background:rgba(240,165,0,.15);color:var(--acc)}
+
+/* ── MODAL ── */
+.mo{position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:700;display:none;align-items:flex-end;justify-content:center}
+.mo.open{display:flex}
+.md{background:var(--surf);border:1px solid var(--bdr);border-radius:20px 20px 0 0;padding:18px 15px 36px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;animation:sup .3s cubic-bezier(.34,1.2,.64,1)}
+@keyframes sup{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.md-title{font-size:15px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.md-close{margin-left:auto;background:var(--surf2);border:1px solid var(--bdr);color:var(--mut);width:27px;height:27px;border-radius:50%;cursor:pointer;font-size:17px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.md-2btn{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:13px}
+
+/* ── UPLOAD ── */
+.upz{border:2px dashed var(--bdr);border-radius:var(--r);padding:20px;text-align:center;cursor:pointer;transition:border-color .2s;margin-bottom:8px}
+.upz:hover,.upz.drag{border-color:var(--acc)}
+.upz input{display:none}
+
+/* ── SEARCH ── */
+.sw{position:relative;margin-bottom:10px}
+.sw input{padding-left:34px}
+.sw-ic{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--mut);font-size:15px}
+
+/* ── ISBN LOOKUP ── */
+.lookup-res{background:var(--surf2);border:1px solid var(--bdr);border-radius:var(--r);padding:12px;margin-top:8px;display:none}
+.lookup-res.show{display:block}
+.lookup-title{font-size:14px;font-weight:600;margin-bottom:4px}
+.lookup-meta{font-size:12px;color:var(--mut)}
+
+/* ── MISC ── */
+.empty{text-align:center;padding:36px 20px;color:var(--mut)}
+.ei{font-size:44px;margin-bottom:10px}
+.et{font-size:13px}
+.tm{font-family:'JetBrains Mono',monospace}
+.tg{color:var(--grn)}
+.ta{color:var(--acc)}
+.tr-{color:var(--red)}
+.sep{border:none;border-top:1px solid var(--bdr);margin:14px 0}
+@media(min-width:480px){.sg{grid-template-columns:repeat(4,1fr)}}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="hdr">
+  <div class="hdr-title">📚 <span>Fuar</span>Satış</div>
+  <div class="hdr-stats">
+    <div class="hs"><div class="hs-v" id="h-rev">₺0</div><div class="hs-l">Net Ciro</div></div>
+    <div class="hs"><div class="hs-v" id="h-cnt" style="color:var(--acc)">0</div><div class="hs-l">Satılan</div></div>
+  </div>
+</header>
+
+<!-- SCROLLABLE CONTENT -->
+<div class="content">
+
+<!-- ════ STOK ════ -->
+<div class="page active" id="pg-stok">
+
+  <div class="card">
+    <div class="st" style="margin-top:0">📦 Kitap Ekle</div>
+
+    <!-- ISBN + kamera -->
+    <div class="fr">
+      <label>ISBN (barkod okut veya yaz)</label>
+      <div style="display:flex;gap:6px">
+        <div class="si-wrap" style="flex:1;margin-top:0">
+          <span class="si-pre">📷</span>
+          <input type="text" id="add-isbn" placeholder="9789750... veya tara"
+            inputmode="numeric" autocomplete="off"
+            oninput="isbnCombo('add-isbn','add-isbn-drop');isbnLookupDebounce(this.value)"
+            onfocus="isbnCombo('add-isbn','add-isbn-drop')"
+            onblur="setTimeout(()=>closeD('add-isbn-drop'),160)">        </div>
+        <button class="btn btn-b" id="cam-btn" onclick="toggleCamera()" style="flex-shrink:0;padding:0 12px;font-size:18px" title="Kamera ile tara">📸</button>
+      </div>
+      <div class="cb-drop" id="add-isbn-drop"></div>
+      <!-- Kamera -->
+      <div id="cam-container">
+        <video id="cam-video" autoplay playsinline muted></video>
+        <canvas id="cam-canvas"></canvas>
+        <div style="text-align:center;padding:6px 0;font-size:11px;color:var(--mut)">Barkodu kameraya gösterin</div>
+      </div>
+      <!-- ISBN lookup result -->
+      <div class="lookup-res" id="isbn-lookup-res">
+        <div class="lookup-title" id="lookup-title"></div>
+        <div class="lookup-meta" id="lookup-meta"></div>
+        <button class="btn btn-p btn-sm" style="margin-top:8px" onclick="applyLookup()">✓ Bilgileri Uygula</button>
+      </div>
+    </div>
+
+    <!-- Kitap adı combo -->
+    <div class="fr">
+      <label>Kitap Adı *</label>
+      <div class="cb-wrap">
+        <div class="cb-row">
+          <input type="text" id="add-title" placeholder="Kitap adı yaz veya seç…"
+            autocomplete="off"
+            oninput="titleCombo('add-title','add-title-drop')"
+            onfocus="titleCombo('add-title','add-title-drop')"
+            onblur="setTimeout(()=>closeD('add-title-drop'),160)"
+            onkeydown="if(event.key==='Escape')closeD('add-title-drop')">
+          <button class="cb-add" id="add-title-addbtn" style="display:none"></button>
+        </div>
+        <div class="cb-drop" id="add-title-drop"></div>
+      </div>
+    </div>
+
+    <!-- Yazar combo -->
+    <div class="fr">
+      <label>Yazar</label>
+      <div class="cb-wrap">
+        <div class="cb-row">
+          <input type="text" id="add-author" placeholder="Yazar seç veya yaz…"
+            autocomplete="off"
+            oninput="personCombo('add-author','add-author-drop','authors')"
+            onfocus="personCombo('add-author','add-author-drop','authors')"
+            onblur="setTimeout(()=>closeD('add-author-drop'),160)"
+            onkeydown="if(event.key==='Escape')closeD('add-author-drop')">
+          <button class="cb-add show" id="add-author-addbtn" onmousedown="e=>e.preventDefault()" onclick="personAddNew('add-author','authors')">+</button>
+        </div>
+        <div class="cb-drop" id="add-author-drop"></div>
+      </div>
+    </div>
+
+    <!-- Yayınevi combo -->
+    <div class="fr">
+      <label>Yayınevi</label>
+      <div class="cb-wrap">
+        <div class="cb-row">
+          <input type="text" id="add-pub" placeholder="Yayınevi seç veya yaz…"
+            autocomplete="off"
+            oninput="personCombo('add-pub','add-pub-drop','publishers')"
+            onfocus="personCombo('add-pub','add-pub-drop','publishers')"
+            onblur="setTimeout(()=>closeD('add-pub-drop'),160)"
+            onkeydown="if(event.key==='Escape')closeD('add-pub-drop')">
+          <button class="cb-add show" id="add-pub-addbtn" onmousedown="e=>e.preventDefault()" onclick="personAddNew('add-pub','publishers')">+</button>
+        </div>
+        <div class="cb-drop" id="add-pub-drop"></div>
+      </div>
+    </div>
+
+    <div class="fg">
+      <div class="fr"><label>Fiyat (₺) *</label><input type="number" id="add-price" placeholder="0.00" step="0.01" inputmode="decimal"></div>
+      <div class="fr"><label>Stok Adedi</label><input type="number" id="add-stock" placeholder="1" inputmode="numeric" value="1"></div>
+    </div>
+    <button class="btn btn-p btn-f" onclick="addBookManual()">+ Stoka Ekle</button>
+  </div>
+
+  <!-- TOPLU İŞLEMLER -->
+  <div class="card">
+    <div class="st" style="margin-top:0">📊 Toplu İşlemler</div>
+    <div class="btn-row">
+      <button class="btn btn-g" onclick="exportInventory()">⬇ Stoku İndir</button>
+      <button class="btn btn-g" onclick="document.getElementById('xl-file').click()">⬆ Stok Yükle</button>
+    </div>
+    <div class="upz" id="upz" onclick="document.getElementById('xl-file').click()">
+      <div style="font-size:26px;margin-bottom:5px">📂</div>
+      <div style="font-size:13px;font-weight:600">Excel / CSV sürükle veya tıkla</div>
+      <div style="font-size:11px;color:var(--mut);margin-top:3px">ISBN | Ad | Yazar | Yayınevi | Fiyat | Stok</div>
+      <input type="file" id="xl-file" accept=".xlsx,.xls,.csv" onchange="importFile(this)">
+    </div>
+    <div id="imp-status"></div>
+  </div>
+
+  <!-- STOK LİSTESİ -->
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+    <div class="st" style="margin:0">Stok (<span id="sc">0</span>)</div>
+    <button class="btn btn-g btn-sm" onclick="clearInv()">🗑 Tümünü Sil</button>
+  </div>
+  <div class="sw"><span class="sw-ic">🔍</span><input type="text" placeholder="Kitap, yazar, ISBN ara…" id="inv-search" oninput="renderInv()"></div>
+  <div id="inv-list"></div>
+</div>
+
+<!-- ════ SATIŞ ════ -->
+<div class="page" id="pg-satis">
+  <div class="scan-box">
+    <div style="font-size:28px;margin-bottom:3px">📱</div>
+    <div style="font-size:14px;font-weight:600;margin-bottom:3px">ISBN Tara / Ara</div>
+    <div style="font-size:11px;color:var(--mut)">Barkod okuyucu, kamera veya arama</div>
+    <div class="si-wrap">
+      <span class="si-pre">▶</span>
+      <input type="text" id="sale-q" placeholder="ISBN, kitap adı veya yazar…"
+        oninput="saleSearch(this.value)"
+        onkeydown="if(event.key==='Enter')scanSale()">
+    </div>
+    <!-- sale cam -->
+    <button class="btn btn-b btn-sm" style="margin-top:8px" onclick="toggleSaleCam()">📸 Kamera</button>
+    <div id="sale-cam-wrap" style="display:none;margin-top:8px">
+      <video id="sale-video" autoplay playsinline muted style="width:100%;border-radius:8px;display:block"></video>
+    </div>
+  </div>
+
+  <div id="sale-results"></div>
+
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+    <div class="st" style="margin:0">🛒 Sepet</div>
+    <button class="btn btn-g btn-sm" onclick="clearCart()">Temizle</button>
+  </div>
+  <div id="cart-list"><div class="empty"><div class="ei">🛒</div><div class="et">Sepet boş</div></div></div>
+
+  <div id="cart-tot-sec" style="display:none">
+    <div class="disc-row">
+      <div style="flex:1"><label>İndirim (%)</label><input type="number" id="disc-r" placeholder="0" min="0" max="100" inputmode="decimal" oninput="calcTot()"></div>
+      <div style="flex:1"><label>İndirim (₺)</label><input type="number" id="disc-a" placeholder="0" min="0" inputmode="decimal" oninput="calcTotA()"></div>
+    </div>
+    <div class="tot-bar">
+      <div class="tr"><span class="tl">Ara Toplam</span><span class="tv" id="t-sub">₺0</span></div>
+      <div class="tr"><span class="tl">İndirim</span><span class="tv" style="color:var(--red)" id="t-disc">-₺0</span></div>
+      <hr class="divider">
+      <div class="tr"><span class="tl" style="font-weight:700;color:var(--txt)">TOPLAM</span><span class="tv tv-big" id="t-grand">₺0</span></div>
+    </div>
+    <div class="pay-btns">
+      <button class="pay-btn pay-cash" onclick="completeSale('nakit')">
+        <span class="pay-ico">💵</span>NAKİT
+      </button>
+      <button class="pay-btn pay-card" onclick="completeSale('kart')">
+        <span class="pay-ico">💳</span>KART
+      </button>
+      <button class="pay-btn pay-wire" onclick="completeSale('havale')">
+        <span class="pay-ico">🏦</span>HAVALE
+      </button>
+    </div>
+    <button class="pay-btn-cancel" onclick="clearCart()">✕ İptal</button>
+  </div>
+</div>
+
+<!-- ════ YAZARLAR / YAYINEVLERİ ════ -->
+<div class="page" id="pg-persons">
+  <div style="display:flex;gap:8px;margin-bottom:12px">
+    <button class="btn btn-p btn-f" onclick="openPersonModal(null,'authors')">+ Yazar Ekle</button>
+    <button class="btn btn-b btn-f" onclick="openPersonModal(null,'publishers')">+ Yayınevi Ekle</button>
+  </div>
+
+  <div style="display:flex;gap:6px;margin-bottom:10px">
+    <button class="btn btn-g" id="tab-auth" style="flex:1;border-bottom:2px solid var(--acc)" onclick="showPersonTab('authors')">👤 Yazarlar</button>
+    <button class="btn btn-g" id="tab-pub" style="flex:1" onclick="showPersonTab('publishers')">🏢 Yayınevleri</button>
+  </div>
+
+  <div class="sw"><span class="sw-ic">🔍</span><input type="text" placeholder="Ara…" id="ps-search" oninput="renderPersons()"></div>
+  <div id="persons-list"></div>
+</div>
+
+<!-- ════ RAPOR ════ -->
+<div class="page" id="pg-rapor">
+  <!-- Fuar geneli -->
+  <div class="st" style="margin-top:0">📊 Fuar Geneli</div>
+  <div class="sg" style="grid-template-columns:1fr 1fr 1fr 1fr">
+    <div class="sc"><div class="sv" id="r-ts">0</div><div class="sl">Satış</div></div>
+    <div class="sc"><div class="sv" id="r-tb">0</div><div class="sl">Kitap</div></div>
+    <div class="sc"><div class="sv" id="r-tr">₺0</div><div class="sl">Brüt</div></div>
+    <div class="sc"><div class="sv" id="r-tn">₺0</div><div class="sl">Net</div></div>
+  </div>
+  <!-- Ödeme tipi -->
+  <div class="sg" style="grid-template-columns:1fr 1fr 1fr;margin-bottom:4px">
+    <div class="sc"><div class="sv" style="color:var(--grn)" id="r-cash">₺0</div><div class="sl">💵 Nakit</div></div>
+    <div class="sc"><div class="sv" style="color:var(--blu)" id="r-card">₺0</div><div class="sl">💳 Kart</div></div>
+    <div class="sc"><div class="sv" style="color:var(--acc)" id="r-wire">₺0</div><div class="sl">🏦 Havale</div></div>
+  </div>
+
+  <!-- Bugün -->
+  <div class="st">📅 Bugün</div>
+  <div class="sg" style="grid-template-columns:1fr 1fr 1fr 1fr">
+    <div class="sc"><div class="sv" id="r-dts">0</div><div class="sl">Satış</div></div>
+    <div class="sc"><div class="sv" id="r-dtb">0</div><div class="sl">Kitap</div></div>
+    <div class="sc"><div class="sv" id="r-dtr">₺0</div><div class="sl">Brüt</div></div>
+    <div class="sc"><div class="sv" id="r-dtn">₺0</div><div class="sl">Net</div></div>
+  </div>
+  <div class="sg" style="grid-template-columns:1fr 1fr 1fr;margin-bottom:4px">
+    <div class="sc"><div class="sv" style="color:var(--grn)" id="r-dcash">₺0</div><div class="sl">💵 Nakit</div></div>
+    <div class="sc"><div class="sv" style="color:var(--blu)" id="r-dcard">₺0</div><div class="sl">💳 Kart</div></div>
+    <div class="sc"><div class="sv" style="color:var(--acc)" id="r-dwire">₺0</div><div class="sl">🏦 Havale</div></div>
+  </div>
+
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;margin-top:14px">
+    <div class="st" style="margin:0">Kitap Raporu</div>
+    <button class="btn btn-g btn-sm" onclick="exportReport()">📥 Excel</button>
+  </div>
+  <div class="sw"><span class="sw-ic">🔍</span><input type="text" placeholder="Filtrele…" id="rpt-q" oninput="renderReport()"></div>
+  <div id="rpt-wrap"><div class="empty"><div class="ei">📊</div><div class="et">Satış yok</div></div></div>
+
+  <div class="st">Satış Geçmişi</div>
+  <div id="sale-log"></div>
+</div>
+
+<!-- ════ AYARLAR / YEDEK ════ -->
+<div class="page" id="pg-ayar">
+  <div class="card">
+    <div class="st" style="margin-top:0">💾 Yedekleme & Geri Yükleme</div>
+    <p style="font-size:12px;color:var(--mut);margin-bottom:12px">Tüm kitaplar, yazarlar, yayınevleri, satışlar ve ayarlar tek JSON dosyasına kaydedilir.</p>
+    <div class="btn-row">
+      <button class="btn btn-p btn-f" onclick="backupAll()">⬇ Yedek Al (JSON)</button>
+      <button class="btn btn-b btn-f" onclick="document.getElementById('bkp-file').click()">⬆ Yedek Yükle</button>
+    </div>
+    <input type="file" id="bkp-file" accept=".json" style="display:none" onchange="restoreBackup(this)">
+    <div id="bkp-status"></div>
+  </div>
+
+  <div class="card">
+    <div class="st" style="margin-top:0">🗑 Veri Temizleme</div>
+    <div class="btn-row" style="flex-wrap:wrap">
+      <button class="btn btn-g" onclick="clearSales()">Satışları Sil</button>
+      <button class="btn btn-g" onclick="clearInv()">Stoğu Sil</button>
+      <button class="btn btn-d" onclick="clearAll()">Tümünü Sil</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="st" style="margin-top:0">ℹ️ Hakkında</div>
+    <p style="font-size:12px;color:var(--mut);line-height:1.6">
+      Kitap Fuar Satış Sistemi · Tüm veriler tarayıcınızda (localStorage) saklanır. 
+      Düzenli yedek almanız önerilir.
+    </p>
+  </div>
+</div>
+
+</div><!-- /content -->
+
+<!-- BOTTOM NAV -->
+<nav class="nav">
+  <div class="ni active" onclick="goPage('stok',0)" id="nv-0"><span class="ni-ic">📦</span><div class="ni-lb">Stok</div></div>
+  <div class="ni" onclick="goPage('satis',1)" id="nv-1"><span class="ni-ic">🛒</span><div class="ni-lb">Satış</div><div class="nbadge" id="cart-badge" style="display:none">0</div></div>
+  <div class="ni" onclick="goPage('persons',2)" id="nv-2"><span class="ni-ic">👥</span><div class="ni-lb">Kişiler</div></div>
+  <div class="ni" onclick="goPage('rapor',3)" id="nv-3"><span class="ni-ic">📊</span><div class="ni-lb">Rapor</div></div>
+  <div class="ni" onclick="goPage('ayar',4)" id="nv-4"><span class="ni-ic">⚙️</span><div class="ni-lb">Ayarlar</div></div>
+</nav>
+
+<!-- BOOK EDIT MODAL -->
+<div class="mo" id="book-modal">
+  <div class="md">
+    <div class="md-title">✏️ Kitap Düzenle <button class="md-close" onclick="closeMo('book-modal')">×</button></div>
+    <input type="hidden" id="em-isbn">
+    <div class="fr"><label>ISBN</label><input type="text" id="em-isbn-show" readonly style="color:var(--mut)"></div>
+    <div class="fr"><label>Kitap Adı</label><input type="text" id="em-title"></div>
+    <div class="fr">
+      <label>Yazar</label>
+      <div class="cb-wrap">
+        <div class="cb-row">
+          <input type="text" id="em-author" autocomplete="off"
+            oninput="personCombo('em-author','em-author-drop','authors')"
+            onfocus="personCombo('em-author','em-author-drop','authors')"
+            onblur="setTimeout(()=>closeD('em-author-drop'),160)">
+          <button class="cb-add show" onmousedown="e=>e.preventDefault()" onclick="personAddNew('em-author','authors')">+</button>
+        </div>
+        <div class="cb-drop" id="em-author-drop"></div>
+      </div>
+    </div>
+    <div class="fr">
+      <label>Yayınevi</label>
+      <div class="cb-wrap">
+        <div class="cb-row">
+          <input type="text" id="em-pub" autocomplete="off"
+            oninput="personCombo('em-pub','em-pub-drop','publishers')"
+            onfocus="personCombo('em-pub','em-pub-drop','publishers')"
+            onblur="setTimeout(()=>closeD('em-pub-drop'),160)">
+          <button class="cb-add show" onmousedown="e=>e.preventDefault()" onclick="personAddNew('em-pub','publishers')">+</button>
+        </div>
+        <div class="cb-drop" id="em-pub-drop"></div>
+      </div>
+    </div>
+    <div class="fg">
+      <div class="fr"><label>Fiyat (₺)</label><input type="number" id="em-price" step="0.01" inputmode="decimal"></div>
+      <div class="fr"><label>Stok</label><input type="number" id="em-stock" inputmode="numeric"></div>
+    </div>
+    <div class="md-2btn">
+      <button class="btn btn-g" onclick="closeMo('book-modal')">İptal</button>
+      <button class="btn btn-p" onclick="saveBookEdit()">Kaydet</button>
+    </div>
+  </div>
+</div>
+
+<!-- PERSON MODAL -->
+<div class="mo" id="person-modal">
+  <div class="md">
+    <div class="md-title" id="pm-title">👤 Kişi <button class="md-close" onclick="closeMo('person-modal')">×</button></div>
+    <input type="hidden" id="pm-id">
+    <input type="hidden" id="pm-type">
+    <div class="fg">
+      <div class="fr"><label>Ad *</label><input type="text" id="pm-name" placeholder="Ad Soyad / Kurum"></div>
+      <div class="fr"><label>Kısa Ad</label><input type="text" id="pm-short" placeholder="Takma ad"></div>
+    </div>
+    <div class="fg">
+      <div class="fr"><label>Telefon</label><input type="tel" id="pm-phone" placeholder="+90 555…"></div>
+      <div class="fr"><label>E-posta</label><input type="email" id="pm-email" placeholder="ornek@mail.com"></div>
+    </div>
+    <div class="fr"><label>Web / Sosyal</label><input type="text" id="pm-web" placeholder="https://…"></div>
+    <div class="fr"><label>Adres</label><textarea id="pm-addr" placeholder="Adres bilgisi…"></textarea></div>
+    <div class="fr"><label>Not</label><textarea id="pm-note" placeholder="Serbest not…"></textarea></div>
+    <div class="md-2btn">
+      <button class="btn btn-g" onclick="closeMo('person-modal')">İptal</button>
+      <button class="btn btn-p" onclick="savePerson()">Kaydet</button>
+    </div>
+  </div>
+</div>
+
+<!-- PERSON DETAIL MODAL -->
+<div class="mo" id="pdetail-modal">
+  <div class="md">
+    <div class="md-title" id="pd-title">👤 Detay <button class="md-close" onclick="closeMo('pdetail-modal')">×</button></div>
+    <div id="pd-body"></div>
+    <div style="display:flex;gap:8px;margin-top:13px">
+      <button class="btn btn-g" style="flex:1" onclick="closeMo('pdetail-modal')">Kapat</button>
+      <button class="btn btn-p" style="flex:1" id="pd-edit-btn" onclick="">Düzenle</button>
+      <button class="btn btn-d btn-sm" id="pd-del-btn" onclick="">🗑</button>
+    </div>
+  </div>
+</div>
+
+<div class="sbar" id="sbar"><div class="sbar-inner" id="sbar-inner"></div></div>
+
+<!-- ════════════════════ SCRIPT ════════════════════ -->
+<script>
+// ── STATE ──────────────────────────────────────
+let inv   = ls('fuar_inv')  || [];
+let sales = ls('fuar_sales')|| [];
+let auths = ls('fuar_auths')|| [];   // {id,name,short,phone,email,web,addr,note}
+let pubs  = ls('fuar_pubs') || [];   // same
+let cart  = [];
+let camStream = null, saleCamStream = null;
+let lookupData = null;
+let personTab  = 'authors';
+
+function ls(k){ try{ const v=localStorage.getItem(k); return v?JSON.parse(v):null; }catch{return null;} }
+function ss(k,v){ localStorage.setItem(k,JSON.stringify(v)); }
+const saveInv  = () => ss('fuar_inv',  inv);
+const saveSls  = () => ss('fuar_sales',sales);
+const saveAuth = () => ss('fuar_auths',auths);
+const savePubs = () => ss('fuar_pubs', pubs);
+
+function genId(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,5); }
+
+// Name lookup helpers
+function authName(n){ const p=auths.find(a=>a.name===n); return p?p.name:n; }
+function pubName(n){ const p=pubs.find(a=>a.name===n); return p?p.name:n; }
+function nameList(arr){ return arr.map(a=>a.name); }
+
+// ── NAV ────────────────────────────────────────
+function goPage(name, idx){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
+  document.getElementById('pg-'+name).classList.add('active');
+  document.getElementById('nv-'+idx).classList.add('active');
+  if(name==='rapor')   { renderReport(); renderSaleLog(); }
+  if(name==='stok')    { renderInv(); }
+  if(name==='persons') { renderPersons(); }
+}
+
+// ── TOAST ──────────────────────────────────────
+let tT;
+function toast(msg,type='inf'){
+  const el=document.getElementById('sbar-inner');
+  el.textContent=msg; el.className='sbar-inner show '+type;
+  clearTimeout(tT); tT=setTimeout(()=>el.classList.remove('show'),2400);
+}
+function closeMo(id){ document.getElementById(id).classList.remove('open'); }
+
+// ── COMBO ENGINE ───────────────────────────────
+function closeD(id){ const d=document.getElementById(id); if(d) d.classList.remove('open'); }
+
+function personCombo(inputId, dropId, listKey){
+  const q = document.getElementById(inputId).value.trim().toLowerCase();
+  const list = listKey==='authors' ? nameList(auths) : nameList(pubs);
+  const hits = q ? list.filter(x=>x.toLowerCase().includes(q)) : list;
+  const exact = list.some(x=>x.toLowerCase()===q);
+  const addBtn = document.getElementById(inputId+'-addbtn');
+  if(addBtn){ addBtn.classList.toggle('show', !!(q&&!exact)); }
+  renderDrop(dropId, hits, inputId, listKey, '');
+  document.getElementById(dropId).classList.add('open');
+}
+
+function personAddNew(inputId, listKey){
+  const val = document.getElementById(inputId).value.trim();
+  if(!val) return;
+  openPersonModal({name:val}, listKey, ()=>{
+    document.getElementById(inputId).value = val;
+  });
+}
+
+function isbnCombo(inputId, dropId){
+  const q = document.getElementById(inputId).value.trim().toLowerCase();
+  const d = document.getElementById(dropId);
+  if(!q||q.length<2){ d.classList.remove('open'); return; }
+  const hits = inv.filter(b=>b.isbn.toLowerCase().includes(q)).slice(0,7);
+  if(!hits.length){ d.classList.remove('open'); return; }
+  d.innerHTML = hits.map(b=>`
+    <div class="cb-it" onmousedown="event.preventDefault()" onclick="fillFromBook('${escQ(b.isbn)}')">
+      <span style="font-size:13px">📖</span>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(b.title)}</div>
+        <div class="tm" style="font-size:10px;color:var(--mut)">${b.isbn}</div>
+      </div>
+      <span class="badge bg-y" style="font-size:10px;margin-left:4px">${fmt(b.price)}</span>
+    </div>`).join('');
+  d.classList.add('open');
+}
+
+function titleCombo(inputId, dropId){
+  const q = document.getElementById(inputId).value.trim().toLowerCase();
+  const d = document.getElementById(dropId);
+  if(!q||q.length<1){ d.classList.remove('open'); return; }
+  const hits = inv.filter(b=>b.title.toLowerCase().includes(q)).slice(0,7);
+  // Tam eşleşme yoksa + butonu göster (yeni kitap olarak eklenebilir)
+  const addBtn = document.getElementById(inputId+'-addbtn');
+  if(addBtn){ addBtn.style.display='none'; } // başlık için + butonu yok, ekleme formun kendisi
+  if(!hits.length){ d.classList.remove('open'); return; }
+  d.innerHTML = hits.map(b=>`
+    <div class="cb-it" onmousedown="event.preventDefault()" onclick="fillFromBook('${escQ(b.isbn)}')">
+      <span style="font-size:13px">📖</span>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(b.title)}</div>
+        <div style="font-size:10px;color:var(--mut)">${esc(b.author||'')}${b.publisher?' · '+esc(b.publisher):''}</div>
+      </div>
+      <span class="badge bg-y" style="font-size:10px;margin-left:4px">${fmt(b.price)}</span>
+    </div>`).join('');
+  d.classList.add('open');
+}
+
+function fillFromBook(isbn){
+  const b = inv.find(x=>x.isbn===isbn); if(!b) return;
+  document.getElementById('add-isbn').value   = b.isbn;
+  document.getElementById('add-title').value  = b.title;
+  document.getElementById('add-author').value = b.author||'';
+  document.getElementById('add-pub').value    = b.publisher||'';
+  document.getElementById('add-price').value  = b.price;
+  document.getElementById('add-stock').value  = 1;
+  ['add-isbn-drop','add-title-drop','add-author-drop','add-pub-drop'].forEach(closeD);
+  // Stok güncelleme moduna geç — butonu renklendir
+  const btn = document.querySelector('#pg-stok .card .btn-p');
+  if(btn){ btn.textContent='↻ Stok Güncelle'; btn.style.background='var(--blu)'; }
+  toast(`"${b.title.substring(0,28)}" — bilgileri düzenleyip güncelle`,'inf');
+}
+
+function renderDrop(dropId, items, inputId, listKey, prefix){
+  const d = document.getElementById(dropId);
+  if(!items.length){
+    d.innerHTML=`<div class="cb-none">Kayıtlı isim yok — + ile ekle</div>`; return;
+  }
+  const ico = listKey==='authors'?'👤':'🏢';
+  d.innerHTML = items.map(name=>`
+    <div class="cb-it" onclick="selectPerson('${escQ(inputId)}','${escQ(name)}','${escQ(dropId)}')">
+      <span>${ico}</span><span style="flex:1">${esc(name)}</span>
+    </div>`).join('');
+}
+
+function selectPerson(inputId, val, dropId){
+  document.getElementById(inputId).value = val;
+  closeD(dropId);
+}
+
+// ── ISBN LOOKUP (Open Library) ─────────────────
+let lookupTimer;
+function isbnLookupDebounce(v){
+  clearTimeout(lookupTimer);
+  const isbn = v.trim().replace(/[^0-9X]/g,'');
+  if(isbn.length!==13&&isbn.length!==10){ hideLookup(); return; }
+  lookupTimer = setTimeout(()=>isbnLookup(isbn), 700);
+}
+
+async function isbnLookup(isbn){
+  const el = document.getElementById('isbn-lookup-res');
+  el.classList.remove('show');
+  lookupData = null;
+  try{
+    const r = await fetch(`https://openlibrary.org/api/books?bibkeys=ISBN:${isbn}&format=json&jscmd=data`);
+    const j = await r.json();
+    const key = `ISBN:${isbn}`;
+    if(!j[key]){ return; }
+    const d = j[key];
+    lookupData = {
+      title: d.title||'',
+      author: d.authors?d.authors.map(a=>a.name).join(', '):'',
+      publisher: d.publishers?d.publishers.map(p=>p.name).join(', '):'',
+      isbn
+    };
+    document.getElementById('lookup-title').textContent = lookupData.title;
+    document.getElementById('lookup-meta').textContent  = [lookupData.author, lookupData.publisher].filter(Boolean).join(' · ');
+    el.classList.add('show');
+  }catch(e){ /* network error – silent */ }
+}
+function hideLookup(){ document.getElementById('isbn-lookup-res').classList.remove('show'); lookupData=null; }
+function applyLookup(){
+  if(!lookupData) return;
+  document.getElementById('add-title').value  = lookupData.title;
+  document.getElementById('add-author').value = lookupData.author;
+  document.getElementById('add-pub').value    = lookupData.publisher;
+  hideLookup();
+  toast('Bilgiler uygulandı','ok');
+}
+
+// ── CAMERA BARCODE ─────────────────────────────
+let scanning = false;
+async function toggleCamera(){
+  const wrap = document.getElementById('cam-container');
+  if(camStream){ stopCamera(); return; }
+  try{
+    camStream = await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});
+    document.getElementById('cam-video').srcObject = camStream;
+    wrap.style.display = 'block';
+    document.getElementById('cam-btn').textContent = '⏹';
+    scanLoop();
+  }catch(e){ toast('Kamera erişimi reddedildi','err'); }
+}
+function stopCamera(){
+  if(camStream){ camStream.getTracks().forEach(t=>t.stop()); camStream=null; }
+  document.getElementById('cam-container').style.display='none';
+  document.getElementById('cam-btn').textContent='📸';
+  scanning=false;
+}
+
+async function toggleSaleCam(){
+  const wrap=document.getElementById('sale-cam-wrap');
+  if(saleCamStream){
+    saleCamStream.getTracks().forEach(t=>t.stop()); saleCamStream=null;
+    wrap.style.display='none'; return;
+  }
+  try{
+    saleCamStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});
+    document.getElementById('sale-video').srcObject=saleCamStream;
+    wrap.style.display='block';
+    saleScanLoop();
+  }catch(e){ toast('Kamera erişimi reddedildi','err'); }
+}
+
+// BarcodeDetector API (modern browsers) + polyfill fallback
+async function scanLoop(){
+  scanning=true;
+  const video=document.getElementById('cam-video');
+  const canvas=document.getElementById('cam-canvas');
+  if('BarcodeDetector' in window){
+    const bd=new BarcodeDetector({formats:['ean_13','ean_8','code_128','code_39']});
+    const loop=async()=>{
+      if(!scanning||!camStream) return;
+      try{
+        const codes=await bd.detect(video);
+        if(codes.length){
+          const raw=codes[0].rawValue;
+          document.getElementById('add-isbn').value=raw;
+          isbnCombo('add-isbn','add-isbn-drop');
+          isbnLookupDebounce(raw);
+          stopCamera();
+          toast('Barkod okundu: '+raw,'ok');
+          return;
+        }
+      }catch{}
+      requestAnimationFrame(loop);
+    };
+    requestAnimationFrame(loop);
+  } else {
+    toast('Tarayıcınız barkod okumayı desteklemiyor. ISBN\'i manuel girin.','err');
+    stopCamera();
+  }
+}
+
+async function saleScanLoop(){
+  const video=document.getElementById('sale-video');
+  if('BarcodeDetector' in window){
+    const bd=new BarcodeDetector({formats:['ean_13','ean_8','code_128']});
+    const loop=async()=>{
+      if(!saleCamStream) return;
+      try{
+        const codes=await bd.detect(video);
+        if(codes.length){
+          const raw=codes[0].rawValue;
+          saleCamStream.getTracks().forEach(t=>t.stop()); saleCamStream=null;
+          document.getElementById('sale-cam-wrap').style.display='none';
+          document.getElementById('sale-q').value=raw;
+          saleSearch(raw);
+          const b=inv.find(x=>x.isbn===raw);
+          if(b){ addToCart(raw); }
+          else { toast('ISBN bulunamadı: '+raw,'err'); }
+          return;
+        }
+      }catch{}
+      requestAnimationFrame(loop);
+    };
+    requestAnimationFrame(loop);
+  } else {
+    toast('Tarayıcınız barkod okumayı desteklemiyor','err');
+  }
+}
+
+// ── INVENTORY ──────────────────────────────────
+function addBookManual(){
+  const isbn  = document.getElementById('add-isbn').value.trim();
+  const title = document.getElementById('add-title').value.trim();
+  const author= document.getElementById('add-author').value.trim();
+  const pub   = document.getElementById('add-pub').value.trim();
+  const price = parseFloat(document.getElementById('add-price').value);
+  const stock = parseInt(document.getElementById('add-stock').value)||1;
+  if(!title){ toast('Kitap adı zorunludur!','err'); return; }
+  if(!price||price<=0){ toast('Geçerli fiyat girin!','err'); return; }
+  addPersonIfNew(author,'authors'); addPersonIfNew(pub,'publishers');
+  const ex = isbn?inv.find(b=>b.isbn===isbn):null;
+  if(ex){
+    ex.stock+=stock; ex.price=price;
+    ex.author=author||ex.author; ex.publisher=pub||ex.publisher;
+    saveInv(); toast(`"${title}" güncellendi`,'ok');
+  } else {
+    inv.push({isbn:isbn||genId(),title,author,publisher:pub,price,stock,addedAt:Date.now()});
+    saveInv(); toast(`"${title}" eklendi`,'ok');
+  }
+  ['add-isbn','add-title','add-author','add-pub','add-price'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('add-stock').value='1';
+  ['add-isbn-drop','add-title-drop','add-author-drop','add-pub-drop'].forEach(closeD);
+  // Butonu resetle
+  const btn=document.querySelector('#pg-stok .card .btn-p');
+  if(btn){btn.textContent='+ Stoka Ekle';btn.style.background='';}
+  hideLookup(); renderInv(); updateHdr();
+  // Stok listesine kayıyı scroll et
+  setTimeout(()=>{ document.getElementById('inv-list').scrollIntoView({behavior:'smooth',block:'start'}); },120);
+}
+
+function addPersonIfNew(name, listKey){
+  name=name.trim(); if(!name) return;
+  const arr=listKey==='authors'?auths:pubs;
+  if(!arr.find(a=>a.name===name)){
+    arr.push({id:genId(),name,short:'',phone:'',email:'',web:'',addr:'',note:''});
+    listKey==='authors'?saveAuth():savePubs();
+  }
+}
+
+function renderInv(){
+  const q=document.getElementById('inv-search').value.toLowerCase();
+  const list=document.getElementById('inv-list');
+  const fil=inv.filter(b=>!q||b.title.toLowerCase().includes(q)||(b.author||'').toLowerCase().includes(q)||(b.publisher||'').toLowerCase().includes(q)||b.isbn.includes(q));
+  document.getElementById('sc').textContent=inv.length;
+  if(!fil.length){ list.innerHTML=`<div class="empty"><div class="ei">📚</div><div class="et">${inv.length?'Sonuç yok':'Stok boş'}</div></div>`; return; }
+  list.innerHTML=fil.map(b=>`
+    <div class="bi">
+      <div class="bi-cov">📖</div>
+      <div class="bi-inf">
+        <div class="bi-title">${esc(b.title)}</div>
+        <div class="bi-sub">${esc(b.author||'—')}${b.publisher?' · '+esc(b.publisher):''}</div>
+        <div class="bi-isbn">${b.isbn}</div>
+      </div>
+      <div style="text-align:right;flex-shrink:0">
+        <div class="bi-price">${fmt(b.price)}</div>
+        <span class="badge ${b.stock>5?'bg-g':b.stock>0?'bg-y':'bg-r'}">${b.stock} adet</span>
+      </div>
+      <div class="bi-acts">
+        <button class="qb" onclick="openBookEdit('${escQ(b.isbn)}')">✏️</button>
+        <button class="qb" onclick="delBook('${escQ(b.isbn)}')">🗑</button>
+      </div>
+    </div>`).join('');
+}
+
+function delBook(isbn){ inv=inv.filter(b=>b.isbn!==isbn); saveInv(); renderInv(); toast('Kitap silindi','inf'); }
+function clearInv(){ if(!confirm('Tüm stok silinsin mi?')) return; inv=[]; saveInv(); renderInv(); }
+
+function openBookEdit(isbn){
+  const b=inv.find(x=>x.isbn===isbn); if(!b) return;
+  document.getElementById('em-isbn').value      = b.isbn;
+  document.getElementById('em-isbn-show').value = b.isbn;
+  document.getElementById('em-title').value     = b.title;
+  document.getElementById('em-author').value    = b.author||'';
+  document.getElementById('em-pub').value       = b.publisher||'';
+  document.getElementById('em-price').value     = b.price;
+  document.getElementById('em-stock').value     = b.stock;
+  document.getElementById('book-modal').classList.add('open');
+}
+function saveBookEdit(){
+  const isbn=document.getElementById('em-isbn').value;
+  const b=inv.find(x=>x.isbn===isbn); if(!b) return;
+  const author=document.getElementById('em-author').value.trim();
+  const pub=document.getElementById('em-pub').value.trim();
+  b.title=document.getElementById('em-title').value;
+  b.author=author; b.publisher=pub;
+  b.price=parseFloat(document.getElementById('em-price').value)||b.price;
+  b.stock=parseInt(document.getElementById('em-stock').value)||0;
+  addPersonIfNew(author,'authors'); addPersonIfNew(pub,'publishers');
+  saveInv(); renderInv(); closeMo('book-modal'); toast('Güncellendi','ok');
+}
+
+// ── PERSON MANAGEMENT ─────────────────────────
+let personCB = null;
+function openPersonModal(data, type, cb){
+  personCB=cb||null;
+  document.getElementById('pm-type').value=type;
+  document.getElementById('pm-id').value=data?.id||'';
+  document.getElementById('pm-title').childNodes[0].textContent=(type==='authors'?'👤 Yazar':'🏢 Yayınevi')+(data?.id?' Düzenle':' Ekle')+' ';
+  document.getElementById('pm-name').value=data?.name||'';
+  document.getElementById('pm-short').value=data?.short||'';
+  document.getElementById('pm-phone').value=data?.phone||'';
+  document.getElementById('pm-email').value=data?.email||'';
+  document.getElementById('pm-web').value=data?.web||'';
+  document.getElementById('pm-addr').value=data?.addr||'';
+  document.getElementById('pm-note').value=data?.note||'';
+  document.getElementById('person-modal').classList.add('open');
+}
+function savePerson(){
+  const type=document.getElementById('pm-type').value;
+  const id=document.getElementById('pm-id').value;
+  const name=document.getElementById('pm-name').value.trim();
+  if(!name){ toast('Ad zorunludur','err'); return; }
+  const data={
+    id:id||genId(),name,
+    short:document.getElementById('pm-short').value.trim(),
+    phone:document.getElementById('pm-phone').value.trim(),
+    email:document.getElementById('pm-email').value.trim(),
+    web:document.getElementById('pm-web').value.trim(),
+    addr:document.getElementById('pm-addr').value.trim(),
+    note:document.getElementById('pm-note').value.trim(),
+  };
+  const arr=type==='authors'?auths:pubs;
+  const idx=arr.findIndex(a=>a.id===data.id);
+  if(idx>=0) arr[idx]=data; else arr.push(data);
+  arr.sort((a,b)=>a.name.localeCompare(b.name,'tr'));
+  type==='authors'?saveAuth():savePubs();
+  closeMo('person-modal');
+  renderPersons();
+  toast(`"${name}" kaydedildi`,'ok');
+  if(personCB) personCB(name);
+}
+
+function showPersonTab(tab){
+  personTab=tab;
+  document.getElementById('tab-auth').style.borderBottom=tab==='authors'?'2px solid var(--acc)':'none';
+  document.getElementById('tab-pub').style.borderBottom=tab==='publishers'?'2px solid var(--acc)':'none';
+  renderPersons();
+}
+
+function renderPersons(){
+  const q=document.getElementById('ps-search').value.toLowerCase();
+  const arr=personTab==='authors'?auths:pubs;
+  const list=document.getElementById('persons-list');
+  const fil=arr.filter(p=>!q||p.name.toLowerCase().includes(q)||(p.email||'').toLowerCase().includes(q));
+  if(!fil.length){ list.innerHTML=`<div class="empty"><div class="ei">${personTab==='authors'?'👤':'🏢'}</div><div class="et">Kayıt yok</div></div>`; return; }
+
+  // compute sales per person
+  const salesByPerson={};
+  for(const sale of sales){
+    const ratio=sale.subtotal>0?(sale.total/sale.subtotal):1;
+    for(const item of sale.items){
+      const key=personTab==='authors'?item.author:item.publisher;
+      if(!key) continue;
+      if(!salesByPerson[key]) salesByPerson[key]={qty:0,brut:0,net:0};
+      salesByPerson[key].qty+=item.qty;
+      salesByPerson[key].brut+=item.price*item.qty;
+      salesByPerson[key].net+=item.price*item.qty*ratio;
+    }
+  }
+
+  list.innerHTML=fil.map(p=>{
+    const s=salesByPerson[p.name]||{qty:0,brut:0,net:0};
+    return `
+      <div class="pc" onclick="openPersonDetail('${escQ(p.id)}','${escQ(personTab)}')">
+        <div class="pc-hdr">
+          <div class="pc-ico">${personTab==='authors'?'👤':'🏢'}</div>
+          <div>
+            <div class="pc-name">${esc(p.name)}</div>
+            <div class="pc-sub">${[p.phone,p.email].filter(Boolean).join(' · ')||'İletişim bilgisi yok'}</div>
+          </div>
+        </div>
+        <div class="pc-stats">
+          <div class="pc-stat"><div class="pc-stat-v">${s.qty}</div><div class="pc-stat-l">Satış Adedi</div></div>
+          <div class="pc-stat"><div class="pc-stat-v" style="font-size:11px;text-decoration:line-through;color:var(--mut)">${fmt(s.brut)}</div><div class="pc-stat-v" style="font-size:12px">${fmt(s.net)}</div><div class="pc-stat-l">Brüt / Net</div></div>
+          <div class="pc-stat"><div class="pc-stat-v">${inv.filter(b=>(personTab==='authors'?b.author:b.publisher)===p.name).length}</div><div class="pc-stat-l">Başlık</div></div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function openPersonDetail(id, type){
+  const arr=type==='authors'?auths:pubs;
+  const p=arr.find(x=>x.id===id); if(!p) return;
+  document.getElementById('pd-title').childNodes[0].textContent=(type==='authors'?'👤':'🏢')+' '+p.name+' ';
+  const s=(()=>{
+    const m={qty:0,brut:0,net:0,nakit:0,kart:0,havale:0};
+    for(const sale of sales){
+      const ratio=sale.subtotal>0?(sale.total/sale.subtotal):1;
+      for(const item of sale.items){
+        const k=type==='authors'?item.author:item.publisher;
+        if(k===p.name){
+          m.qty+=item.qty;
+          const b=item.price*item.qty;
+          m.brut+=b; m.net+=b*ratio;
+          m[sale.payType||'nakit']=(m[sale.payType||'nakit']||0)+b*ratio;
+        }
+      }
+    }
+    return m;
+  })();
+  const disc=s.brut-s.net;
+  document.getElementById('pd-body').innerHTML=`
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+      <div class="sc"><div class="sv">${s.qty}</div><div class="sl">Satılan Kitap</div></div>
+      <div class="sc">
+        ${disc>0?`<div style="font-size:11px;color:var(--mut);text-decoration:line-through;text-align:center">${fmt(s.brut)}</div>`:''}
+        <div class="sv">${fmt(s.net)}</div>
+        <div class="sl">Net Ciro${disc>0?' (-'+fmt(disc)+')':''}</div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:12px">
+      <div class="sc"><div class="sv" style="color:var(--grn);font-size:13px">${fmt(s.nakit)}</div><div class="sl">💵 Nakit</div></div>
+      <div class="sc"><div class="sv" style="color:var(--blu);font-size:13px">${fmt(s.kart)}</div><div class="sl">💳 Kart</div></div>
+      <div class="sc"><div class="sv" style="color:var(--acc);font-size:13px">${fmt(s.havale)}</div><div class="sl">🏦 Havale</div></div>
+    </div>
+    ${p.phone?`<div class="fr"><label>Telefon</label><div style="font-size:14px;padding:4px 0">${esc(p.phone)}</div></div>`:''}
+    ${p.email?`<div class="fr"><label>E-posta</label><div style="font-size:14px;padding:4px 0">${esc(p.email)}</div></div>`:''}
+    ${p.web?`<div class="fr"><label>Web</label><div style="font-size:13px;padding:4px 0;color:var(--blu)">${esc(p.web)}</div></div>`:''}
+    ${p.addr?`<div class="fr"><label>Adres</label><div style="font-size:13px;color:var(--mut);padding:4px 0">${esc(p.addr).replace(/\n/g,'<br>')}</div></div>`:''}
+    ${p.note?`<div class="fr"><label>Not</label><div style="font-size:13px;color:var(--mut);padding:4px 0">${esc(p.note).replace(/\n/g,'<br>')}</div></div>`:''}
+  `;
+  document.getElementById('pd-edit-btn').onclick=()=>{closeMo('pdetail-modal');openPersonModal(p,type);};
+  document.getElementById('pd-del-btn').onclick=()=>{
+    if(!confirm(`"${p.name}" silinsin mi?`)) return;
+    if(type==='authors') auths=auths.filter(a=>a.id!==id),saveAuth();
+    else pubs=pubs.filter(a=>a.id!==id),savePubs();
+    closeMo('pdetail-modal'); renderPersons(); toast('Silindi','inf');
+  };
+  document.getElementById('pdetail-modal').classList.add('open');
+}
+
+// ── IMPORT / EXPORT ────────────────────────────
+function importFile(input){
+  const file=input.files[0]; if(!file) return;
+  if(file.name.toLowerCase().endsWith('.csv')){
+    const r=new FileReader();
+    r.onload=e=>parseRows(csvToRows(e.target.result));
+    r.readAsText(file,'UTF-8');
+  } else {
+    loadXLSX(()=>readXLSX(file));
+  }
+  input.value='';
+}
+function loadXLSX(cb){
+  if(window.XLSX){ cb(); return; }
+  const s=document.createElement('script');
+  s.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+  s.onload=cb; document.head.appendChild(s);
+}
+function readXLSX(file){
+  const r=new FileReader();
+  r.onload=e=>{
+    try{
+      const wb=XLSX.read(new Uint8Array(e.target.result),{type:'array'});
+      const ws=wb.Sheets[wb.SheetNames[0]];
+      parseRows(XLSX.utils.sheet_to_json(ws,{header:1,defval:'',raw:false}));
+    }catch(ex){ toast('Excel okunamadı: '+ex.message,'err'); }
+  };
+  r.readAsArrayBuffer(file);
+}
+function csvToRows(text){
+  return text.split(/\r?\n/).map(r=>r.split(/[,;|\t]/).map(c=>c.trim().replace(/^"|"$/g,'')));
+}
+function parseRows(rows){
+  if(rows.length<2){ toast('Veri bulunamadı','err'); return; }
+  const h=rows[0].map(x=>(x||'').toString().toLowerCase());
+  const ci={
+    isbn:colIdx(h,['isbn','barkod','barcode']),
+    title:colIdx(h,['ad','adı','kitap','title','name']),
+    author:colIdx(h,['yazar','author']),
+    pub:colIdx(h,['yayınevi','yayinevi','publisher']),
+    price:colIdx(h,['fiyat','price','ücret']),
+    stock:colIdx(h,['stok','adet','stock','qty']),
+  };
+  let a=0,u=0;
+  for(let i=1;i<rows.length;i++){
+    const row=rows[i]; if(!row||row.length<2||row.every(c=>!c)) continue;
+    const get=(ci_key,fallback)=>{
+      const idx=ci[ci_key];
+      const val=(idx>=0&&idx<row.length?row[idx]:row[fallback])||'';
+      return val.toString().trim();
+    };
+    const title=get('title',1); if(!title) continue;
+    const isbn=get('isbn',0)||genId();
+    const author=get('author',2); const pub=get('pub',3);
+    const price=parseFloat(get('price',4).replace(',','.'))||0;
+    const stock=parseInt(get('stock',5))||1;
+    addPersonIfNew(author,'authors'); addPersonIfNew(pub,'publishers');
+    const ex=inv.find(b=>b.isbn===isbn);
+    if(ex){ex.stock+=stock;u++;}
+    else{inv.push({isbn,title,author,publisher:pub,price,stock,addedAt:Date.now()});a++;}
+  }
+  saveInv(); renderInv(); updateHdr();
+  document.getElementById('imp-status').innerHTML=`<div class="badge bg-g" style="margin-top:6px;display:inline-block">${a} yeni, ${u} güncellendi</div>`;
+  toast(`${a} kitap eklendi`,'ok');
+}
+function colIdx(h,keys){ for(const k of keys){const i=h.findIndex(x=>x.includes(k));if(i>=0)return i;}return -1; }
+
+function exportInventory(){
+  // Use XLSX if available for proper column separation
+  loadXLSX(()=>{
+    const wsData=[['ISBN','Kitap Adı','Yazar','Yayınevi','Fiyat','Stok']];
+    inv.forEach(b=>wsData.push([b.isbn,b.title,b.author||'',b.publisher||'',b.price,b.stock]));
+    const wb=XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(wsData),'Stok');
+    XLSX.writeFile(wb,`stok-${today()}.xlsx`);
+    toast('Stok indirildi','ok');
+  });
+}
+
+// ── CART ───────────────────────────────────────
+function saleSearch(val){
+  const q=val.trim().toLowerCase();
+  const wrap=document.getElementById('sale-results');
+  if(!q||q.length<2){ wrap.innerHTML=''; return; }
+  const res=inv.filter(b=>
+    b.isbn.includes(q)||
+    b.title.toLowerCase().includes(q)||
+    (b.author||'').toLowerCase().includes(q)||
+    (b.publisher||'').toLowerCase().includes(q)
+  ).slice(0,7);
+  if(!res.length){ wrap.innerHTML=''; return; }
+  wrap.innerHTML=res.map(b=>`
+    <div class="bi" style="cursor:pointer" onclick="addToCart('${escQ(b.isbn)}')">
+      <div class="bi-cov">📖</div>
+      <div class="bi-inf">
+        <div class="bi-title">${esc(b.title)}</div>
+        <div class="bi-sub">${esc(b.author||'—')}${b.publisher?' · '+esc(b.publisher):''}</div>
+        <div class="bi-isbn">${b.isbn}</div>
+      </div>
+      <div style="text-align:right;flex-shrink:0">
+        <div class="bi-price">${fmt(b.price)}</div>
+        <span class="badge ${b.stock>0?'bg-g':'bg-r'}">${b.stock} adet</span>
+      </div>
+    </div>`).join('');
+}
+
+function scanSale(){
+  const q=document.getElementById('sale-q').value.trim();
+  const b=inv.find(x=>x.isbn===q);
+  if(b){ addToCart(q); return; }
+  const res=inv.filter(x=>x.title.toLowerCase().includes(q.toLowerCase()));
+  if(res.length===1){ addToCart(res[0].isbn); }
+  else if(!res.length){ toast('Bulunamadı','err'); }
+}
+
+function addToCart(isbn){
+  const b=inv.find(x=>x.isbn===isbn); if(!b) return;
+  if(b.stock<=0){ toast('Stok yok!','err'); return; }
+  const ex=cart.find(c=>c.isbn===isbn);
+  if(ex){ if(ex.qty>=b.stock){toast('Stok yetersiz','err');return;} ex.qty++; }
+  else cart.push({isbn,title:b.title,author:b.author||'',publisher:b.publisher||'',price:b.price,qty:1});
+  document.getElementById('sale-q').value='';
+  document.getElementById('sale-results').innerHTML='';
+  renderCart();
+  toast(`"${b.title.substring(0,28)}" eklendi`,'ok');
+}
+
+function chQty(isbn,d){
+  const item=cart.find(c=>c.isbn===isbn); if(!item) return;
+  item.qty+=d; if(item.qty<=0) cart=cart.filter(c=>c.isbn!==isbn);
+  renderCart();
+}
+function remCart(isbn){ cart=cart.filter(c=>c.isbn!==isbn); renderCart(); }
+function clearCart(){
+  cart=[];
+  document.getElementById('disc-r').value='';
+  document.getElementById('disc-a').value='';
+  renderCart();
+}
+
+function renderCart(){
+  const list=document.getElementById('cart-list');
+  const sec=document.getElementById('cart-tot-sec');
+  const badge=document.getElementById('cart-badge');
+  const tot=cart.reduce((s,c)=>s+c.qty,0);
+  badge.textContent=tot; badge.style.display=tot>0?'flex':'none';
+  if(!cart.length){ list.innerHTML=`<div class="empty"><div class="ei">🛒</div><div class="et">Sepet boş</div></div>`; sec.style.display='none'; return; }
+  list.innerHTML=cart.map(it=>`
+    <div class="ci">
+      <div class="ci-inf">
+        <div class="ci-title">${esc(it.title)}</div>
+        <div class="ci-price">${fmt(it.price)} / adet</div>
+      </div>
+      <div class="qc">
+        <button class="qb" onclick="chQty('${escQ(it.isbn)}',-1)">−</button>
+        <span class="qv">${it.qty}</span>
+        <button class="qb" onclick="chQty('${escQ(it.isbn)}',1)">+</button>
+      </div>
+      <div style="text-align:right">
+        <div class="ci-tot">${fmt(it.price*it.qty)}</div>
+        <button class="qb" onclick="remCart('${escQ(it.isbn)}')" style="margin-top:4px;margin-left:auto;font-size:12px">🗑</button>
+      </div>
+    </div>`).join('');
+  sec.style.display='block'; calcTot();
+}
+
+function calcTot(){
+  const sub=cart.reduce((s,c)=>s+c.price*c.qty,0);
+  const rate=parseFloat(document.getElementById('disc-r').value)||0;
+  const disc=sub*rate/100;
+  document.getElementById('disc-a').value=disc>0?disc.toFixed(2):'';
+  setTUI(sub,disc);
+}
+function calcTotA(){
+  const sub=cart.reduce((s,c)=>s+c.price*c.qty,0);
+  const amt=parseFloat(document.getElementById('disc-a').value)||0;
+  const rate=sub>0?(amt/sub*100):0;
+  document.getElementById('disc-r').value=rate>0?rate.toFixed(1):'';
+  setTUI(sub,amt);
+}
+function setTUI(sub,disc){
+  document.getElementById('t-sub').textContent=fmt(sub);
+  document.getElementById('t-disc').textContent='-'+fmt(disc);
+  document.getElementById('t-grand').textContent=fmt(sub-disc);
+}
+
+function completeSale(payType){
+  if(!cart.length) return;
+  const sub=cart.reduce((s,c)=>s+c.price*c.qty,0);
+  const rate=parseFloat(document.getElementById('disc-r').value)||0;
+  const disc=parseFloat(document.getElementById('disc-a').value)||(sub*rate/100);
+  const grand=sub-disc;
+  for(const it of cart){ const b=inv.find(x=>x.isbn===it.isbn); if(!b||b.stock<it.qty){toast(`"${it.title}" stok yetersiz!`,'err');return;} }
+  for(const it of cart){ inv.find(x=>x.isbn===it.isbn).stock-=it.qty; }
+  const dateStr = new Date().toLocaleDateString('tr-TR');
+  sales.push({
+    id:Date.now(), time:new Date().toLocaleString('tr-TR'), date:dateStr,
+    payType: payType||'nakit',
+    items:cart.map(c=>({...c})),
+    subtotal:sub, discount:disc, discountRate:rate, total:grand
+  });
+  saveSls(); saveInv();
+  const cnt=cart.reduce((s,c)=>s+c.qty,0);
+  const payLabel={nakit:'💵 Nakit',kart:'💳 Kart',havale:'🏦 Havale'}[payType]||payType;
+  toast(`✓ ${cnt} kitap · ${payLabel} · ${fmt(grand)}`,'ok');
+  clearCart(); updateHdr();
+}
+
+// ── REPORT ─────────────────────────────────────
+function renderReport(){
+  const q=(document.getElementById('rpt-q').value||'').toLowerCase();
+  const wrap=document.getElementById('rpt-wrap');
+  const todayStr=new Date().toLocaleDateString('tr-TR');
+
+  // Fuar geneli
+  const allSub=sales.reduce((s,sl)=>s+sl.subtotal,0);
+  const allNet=sales.reduce((s,sl)=>s+sl.total,0);
+  const allDisc=allSub-allNet;
+  document.getElementById('r-ts').textContent=sales.length;
+  document.getElementById('r-tb').textContent=sales.reduce((s,sl)=>s+sl.items.reduce((ss,i)=>ss+i.qty,0),0);
+  document.getElementById('r-tr').textContent=fmt(allSub);
+  document.getElementById('r-tn').textContent=fmt(allNet);
+  document.getElementById('r-cash').textContent=fmt(sales.filter(s=>s.payType==='nakit').reduce((s,sl)=>s+sl.total,0));
+  document.getElementById('r-card').textContent=fmt(sales.filter(s=>s.payType==='kart').reduce((s,sl)=>s+sl.total,0));
+  document.getElementById('r-wire').textContent=fmt(sales.filter(s=>s.payType==='havale').reduce((s,sl)=>s+sl.total,0));
+
+  // Bugün
+  const todaySales=sales.filter(s=>s.date===todayStr||s.time.startsWith(todayStr));
+  document.getElementById('r-dts').textContent=todaySales.length;
+  document.getElementById('r-dtb').textContent=todaySales.reduce((s,sl)=>s+sl.items.reduce((ss,i)=>ss+i.qty,0),0);
+  document.getElementById('r-dtr').textContent=fmt(todaySales.reduce((s,sl)=>s+sl.subtotal,0));
+  document.getElementById('r-dtn').textContent=fmt(todaySales.reduce((s,sl)=>s+sl.total,0));
+  document.getElementById('r-dcash').textContent=fmt(todaySales.filter(s=>s.payType==='nakit').reduce((s,sl)=>s+sl.total,0));
+  document.getElementById('r-dcard').textContent=fmt(todaySales.filter(s=>s.payType==='kart').reduce((s,sl)=>s+sl.total,0));
+  document.getElementById('r-dwire').textContent=fmt(todaySales.filter(s=>s.payType==='havale').reduce((s,sl)=>s+sl.total,0));
+
+  // Kitap bazlı (brüt ve net ayrı)
+  const bb={};
+  for(const sl of sales){
+    const ratio=sl.subtotal>0?(sl.total/sl.subtotal):1; // indirim oranı
+    for(const it of sl.items){
+      if(!bb[it.isbn]) bb[it.isbn]={isbn:it.isbn,title:it.title,author:it.author||'',qty:0,brut:0,net:0};
+      bb[it.isbn].qty+=it.qty;
+      bb[it.isbn].brut+=it.price*it.qty;
+      bb[it.isbn].net+=it.price*it.qty*ratio;
+    }
+  }
+  let rows=Object.values(bb).sort((a,b)=>b.qty-a.qty);
+  if(q) rows=rows.filter(r=>r.title.toLowerCase().includes(q)||r.isbn.includes(q));
+
+  if(!rows.length){ wrap.innerHTML=`<div class="empty"><div class="ei">📊</div><div class="et">Satış yok</div></div>`; return; }
+  wrap.innerHTML=`<div class="tw"><table class="rt">
+    <thead><tr><th>Kitap</th><th>Adet</th><th>Brüt</th><th>Net</th></tr></thead>
+    <tbody>${rows.map(r=>`<tr>
+      <td><div style="font-weight:600;font-size:12px">${esc(r.title)}</div><div style="font-size:10px;color:var(--mut)">${esc(r.author)}</div><div class="tm" style="font-size:9px;color:var(--mut)">${r.isbn}</div></td>
+      <td><span class="badge bg-y tm">${r.qty}</span></td>
+      <td class="tm" style="font-size:11px;color:var(--mut);text-decoration:${r.brut!==r.net?'line-through':''}">${fmt(r.brut)}</td>
+      <td class="tm tg" style="font-weight:700;font-size:12px">${fmt(r.net)}</td>
+    </tr>`).join('')}</tbody>
+  </table></div>`;
+}
+
+function renderSaleLog(){
+  const list=document.getElementById('sale-log');
+  if(!sales.length){ list.innerHTML=`<div class="empty"><div class="ei">🧾</div><div class="et">Satış yok</div></div>`; return; }
+  const payLabel={nakit:'💵 Nakit',kart:'💳 Kart',havale:'🏦 Havale'};
+  const payClass={nakit:'pay-badge-cash',kart:'pay-badge-card',havale:'pay-badge-wire'};
+  list.innerHTML=[...sales].reverse().map(s=>`
+    <div class="sli">
+      <div class="sli-hdr">
+        <div>
+          <div style="font-size:12px;font-weight:600">${s.items.reduce((t,i)=>t+i.qty,0)} kitap
+            <span class="badge ${payClass[s.payType]||'bg-b'}" style="font-size:10px;margin-left:4px">${payLabel[s.payType]||s.payType||'Nakit'}</span>
+          </div>
+          <div class="sli-time">${s.time}</div>
+        </div>
+        <div style="text-align:right">
+          ${s.discount>0?`<div style="font-size:10px;color:var(--mut);text-decoration:line-through">${fmt(s.subtotal)}</div>`:''}
+          <div class="sli-tot">${fmt(s.total)}</div>
+          ${s.discount>0?`<div class="badge bg-r" style="font-size:9px">-${fmt(s.discount)} indirim</div>`:''}
+          <button class="qb" onclick="delSale(${s.id})" style="margin-top:3px;font-size:11px;margin-left:auto">🗑</button>
+        </div>
+      </div>
+      <div class="sli-books">${s.items.map(i=>`${esc(i.title)} x${i.qty}`).join(' · ')}</div>
+    </div>`).join('');
+}
+
+function delSale(id){
+  if(!confirm('Bu satış silinsin mi?')) return;
+  sales=sales.filter(s=>s.id!==id); saveSls(); renderReport(); renderSaleLog(); updateHdr(); toast('Satış silindi','inf');
+}
+
+function exportReport(){
+  loadXLSX(()=>{
+    const bb={};
+    for(const s of sales) for(const it of s.items){
+      if(!bb[it.isbn]) bb[it.isbn]={isbn:it.isbn,title:it.title,author:it.author||'',qty:0,rev:0};
+      bb[it.isbn].qty+=it.qty; bb[it.isbn].rev+=it.price*it.qty;
+    }
+    const ws1=[['ISBN','Kitap Adı','Yazar','Satılan Adet','Toplam Ciro'],...Object.values(bb).sort((a,b)=>b.qty-a.qty).map(r=>[r.isbn,r.title,r.author,r.qty,r.rev])];
+    const ws2=[['Zaman','Kitaplar','Brüt','İndirim','Net'],...sales.map(s=>[s.time,s.items.map(i=>`${i.title} x${i.qty}`).join('; '),s.subtotal,s.discount,s.total])];
+    const wb=XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(ws1),'Kitap Raporu');
+    XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(ws2),'Satış Detayları');
+    XLSX.writeFile(wb,`fuar-rapor-${today()}.xlsx`);
+    toast('Rapor indirildi','ok');
+  });
+}
+
+// ── BACKUP / RESTORE ───────────────────────────
+function backupAll(){
+  const data={ver:2,date:new Date().toISOString(),inv,sales,auths,pubs};
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a'); a.href=url; a.download=`fuar-yedek-${today()}.json`; a.click();
+  URL.revokeObjectURL(url);
+  toast('Yedek alındı','ok');
+}
+function restoreBackup(input){
+  const file=input.files[0]; if(!file) return;
+  const r=new FileReader();
+  r.onload=e=>{
+    try{
+      const d=JSON.parse(e.target.result);
+      if(!d.ver||!d.inv){ toast('Geçersiz yedek dosyası','err'); return; }
+      if(!confirm(`Yedek yüklenecek:\n• ${d.inv.length} kitap\n• ${d.sales?.length||0} satış\n• ${d.auths?.length||0} yazar\n• ${d.pubs?.length||0} yayınevi\n\nMevcut veriler silinecek. Devam edilsin mi?`)) return;
+      inv=d.inv||[]; sales=d.sales||[]; auths=d.auths||[]; pubs=d.pubs||[];
+      saveInv(); saveSls(); saveAuth(); savePubs();
+      renderInv(); updateHdr(); renderPersons();
+      document.getElementById('bkp-status').innerHTML=`<div class="badge bg-g" style="margin-top:8px;display:inline-block">✓ Yedek başarıyla yüklendi</div>`;
+      toast('Yedek yüklendi','ok');
+    }catch(ex){ toast('Dosya okunamadı: '+ex.message,'err'); }
+  };
+  r.readAsText(file,'UTF-8');
+  input.value='';
+}
+function clearSales(){ if(!confirm('Tüm satışlar silinsin mi?')) return; sales=[]; saveSls(); toast('Satışlar silindi','inf'); }
+function clearAll(){ if(!confirm('TÜM VERİLER silinsin mi? Bu işlem geri alınamaz!')) return; inv=[];sales=[];auths=[];pubs=[]; saveInv();saveSls();saveAuth();savePubs(); renderInv();renderPersons();updateHdr(); toast('Tüm veriler silindi','inf'); }
+
+// ── HELPERS ────────────────────────────────────
+function updateHdr(){
+  document.getElementById('h-rev').textContent=fmt(sales.reduce((s,sl)=>s+sl.total,0));
+  document.getElementById('h-cnt').textContent=sales.reduce((s,sl)=>s+sl.items.reduce((ss,i)=>ss+i.qty,0),0);
+}
+function fmt(n){ return '₺'+(n||0).toLocaleString('tr-TR',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function escQ(s){ return (s||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
+function today(){ return new Date().toLocaleDateString('tr-TR').replace(/\./g,'-'); }
+
+// drag-drop
+const upz=document.getElementById('upz');
+upz.addEventListener('dragover',e=>{e.preventDefault();upz.classList.add('drag')});
+upz.addEventListener('dragleave',()=>upz.classList.remove('drag'));
+upz.addEventListener('drop',e=>{e.preventDefault();upz.classList.remove('drag');const f=e.dataTransfer.files[0];if(f)importFile({files:[f]});});
+
+// init
+renderInv(); updateHdr();
+</script>
+</body>
+</html>
